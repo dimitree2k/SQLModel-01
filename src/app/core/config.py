@@ -32,7 +32,9 @@ class DatabaseSettings(BaseSettings):
 class SQLiteSettings(DatabaseSettings):
     SQLITE_URI: str = config("SQLITE_URI", default="./sql_app.db")
     SQLITE_SYNC_PREFIX: str = config("SQLITE_SYNC_PREFIX", default="sqlite:///")
-    SQLITE_ASYNC_PREFIX: str = config("SQLITE_ASYNC_PREFIX", default="sqlite+aiosqlite:///")
+    SQLITE_ASYNC_PREFIX: str = config(
+        "SQLITE_ASYNC_PREFIX", default="sqlite+aiosqlite:///"
+    )
 
 
 class PostgresSettings(DatabaseSettings):
@@ -42,8 +44,12 @@ class PostgresSettings(DatabaseSettings):
     POSTGRES_PORT: int = config("POSTGRES_PORT", default=5432)
     POSTGRES_DB: str = config("POSTGRES_DB", default="postgres")
     POSTGRES_SYNC_PREFIX: str = config("POSTGRES_SYNC_PREFIX", default="postgresql://")
-    POSTGRES_ASYNC_PREFIX: str = config("POSTGRES_ASYNC_PREFIX", default="postgresql+asyncpg://")
-    POSTGRES_URI: str = f"{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    POSTGRES_ASYNC_PREFIX: str = config(
+        "POSTGRES_ASYNC_PREFIX", default="postgresql+asyncpg://"
+    )
+    POSTGRES_URI: str = (
+        f"{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    )
     POSTGRES_URL: str | None = config("POSTGRES_URL", default=None)
 
 
@@ -79,7 +85,9 @@ class RedisQueueSettings(BaseSettings):
 class RedisRateLimiterSettings(BaseSettings):
     REDIS_RATE_LIMIT_HOST: str = config("REDIS_RATE_LIMIT_HOST", default="localhost")
     REDIS_RATE_LIMIT_PORT: int = config("REDIS_RATE_LIMIT_PORT", default=6379)
-    REDIS_RATE_LIMIT_URL: str = f"redis://{REDIS_RATE_LIMIT_HOST}:{REDIS_RATE_LIMIT_PORT}"
+    REDIS_RATE_LIMIT_URL: str = (
+        f"redis://{REDIS_RATE_LIMIT_HOST}:{REDIS_RATE_LIMIT_PORT}"
+    )
 
 
 class DefaultRateLimitSettings(BaseSettings):
@@ -100,12 +108,12 @@ class DBOption(Enum):
 
 class EnvironmentSettings(BaseSettings):
     ENVIRONMENT: EnvironmentOption = config("ENVIRONMENT", default="local")
-    DB_ENGINE: DBOption = config("DB_ENGINE", default="sqlite")
+    DB_ENGINE: DBOption = config("DB_ENGINE", default="postgres")
 
 
 db_type = PostgresSettings
-if config("DB_ENGINE", default="sqlite") == "sqlite":
-    db_type = SQLiteSettings
+# if config("DB_ENGINE", default="sqlite") == "sqlite":
+#     db_type = SQLiteSettings
 
 
 class Settings(
